@@ -41,4 +41,4 @@ jobs:
         uses: azure/functions-action@v1
         with:
           app-name: crudSilabo    # Nombre de tu Azure Function App
-          package: ./API                    # Carpeta donde está el código
+          package: api                    # Carpeta donde está el código
