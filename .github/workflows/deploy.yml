@@ -8,7 +8,7 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: 'silabosUsmp'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'
-  NODE_VERSION: '22.x'
+  NODE_VERSION: '20.x'  # ✅ Versión LTS estable
 
 jobs:
   build-and-deploy:
@@ -36,20 +36,25 @@ jobs:
       # 4️⃣ Ejecutar tests (opcional)
       - name: Run tests
         working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        run: npm test || echo "No tests found"
+        run: npm test
         continue-on-error: true
        
-      # 5️⃣ Build del proyecto
-      - name: Build project
-        working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        run: npm run build || echo "No build script found"
-        continue-on-error: true
-       
-      # 6️⃣ Login a Azure usando Service Principal
+      # 5️⃣ Login a Azure usando Service Principal
       - name: Login to Azure
-        uses: azure/login@v2  # Versión más reciente
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+       
+      # 6️⃣ Configurar runtime de Azure Function explícitamente
+      - name: Set Function App Runtime
+        run: |
+          az functionapp config appsettings set `
+            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} `
+            --resource-group silabosUsmp_group `
+            --settings "FUNCTIONS_NODE_VERSION=~20" `
+                      "WEBSITE_NODE_DEFAULT_VERSION=~20" `
+                      "FUNCTIONS_EXTENSION_VERSION=~4"
+        shell: powershell
        
       # 7️⃣ Desplegar usando Azure Functions Action con RBAC
       - name: Deploy to Azure Function
@@ -57,10 +62,17 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          slot-name: 'production'  # Explícito
+          slot-name: 'production'
           respect-funcignore: true
        
-      # 8️⃣ Logout de Azure (buena práctica de seguridad)
+      # 8️⃣ Verificar el estado del deployment
+      - name: Verify deployment
+        run: |
+          Write-Host "Checking function app status..."
+          az functionapp show --name ${{ env.AZURE_FUNCTIONAPP_NAME }} --resource-group silabosUsmp_group --query "state"
+        shell: powershell
+       
+      # 9️⃣ Logout de Azure (buena práctica de seguridad)
       - name: Logout from Azure
         run: az logout
-        if: always()  # ✅ Sintaxis corregida
+        if: always()
