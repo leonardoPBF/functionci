@@ -22,12 +22,12 @@ jobs:
 
       # 3️⃣ Instalar dependencias
       - name: Install dependencies
-        working-directory: ./API
+        working-directory: ./api
         run: npm install
 
       # 4️⃣ Ejecutar tests (opcional)
       - name: Run tests
-        working-directory: ./API
+        working-directory: ./api
         run: npm test || echo "No tests found"
 
       # 5️⃣ Iniciar sesión en Azure
@@ -41,4 +41,4 @@ jobs:
         uses: azure/functions-action@v1
         with:
           app-name: crudSilabo    # Nombre de tu Azure Function App
-          package: api                    # Carpeta donde está el código
+          package: ./API                    # Carpeta donde está el código
