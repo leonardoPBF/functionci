@@ -1,14 +1,14 @@
-name: Deploy Azure Function
+name: Deploy Azure Function with RBAC
 
 on:
   push:
     branches:
-      - main   # Cambia si usas otra rama
+      - main
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'crudSilabo'       # Nombre de tu Azure Function App en Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'    # Ruta donde está tu código de la Function
-  NODE_VERSION: '22.x'                    # Versión de Node.js
+  AZURE_FUNCTIONAPP_NAME: 'crudSilabo'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'
+  NODE_VERSION: '22.x'
 
 jobs:
   build-and-deploy:
@@ -36,10 +36,21 @@ jobs:
         working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         run: npm test || echo "No tests found"
 
-      # 5️⃣ Desplegar la Azure Function con Publish Profile
+      # 5️⃣ Login a Azure usando Service Principal
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 6️⃣ Desplegar usando Azure Functions Action con RBAC
       - name: Deploy to Azure Function
         uses: azure/functions-action@v1
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          # No uses publish-profile aquí, ya que usamos RBAC
+
+      # 7️⃣ Logout de Azure (buena práctica de seguridad)
+      - name: Logout from Azure
+        run: az logout
+        if: always()
