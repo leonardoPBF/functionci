@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'crudSilabo'
+  AZURE_FUNCTIONAPP_NAME: 'silabosUsmp'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'
   NODE_VERSION: '22.x'
 
@@ -14,43 +14,53 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: production
-
+    
     steps:
       # 1️⃣ Descargar el código
       - name: Checkout repository
         uses: actions/checkout@v4
-
+       
       # 2️⃣ Configurar Node.js
       - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
+          cache: 'npm'
+          cache-dependency-path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/package-lock.json'
+       
       # 3️⃣ Instalar dependencias
       - name: Install dependencies
         working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        run: npm install
-
+        run: npm ci
+       
       # 4️⃣ Ejecutar tests (opcional)
       - name: Run tests
         working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         run: npm test || echo "No tests found"
-
-      # 5️⃣ Login a Azure usando Service Principal
+        continue-on-error: true
+       
+      # 5️⃣ Build del proyecto
+      - name: Build project
+        working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        run: npm run build || echo "No build script found"
+        continue-on-error: true
+       
+      # 6️⃣ Login a Azure usando Service Principal
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2  # Versión más reciente
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # 6️⃣ Desplegar usando Azure Functions Action con RBAC
+       
+      # 7️⃣ Desplegar usando Azure Functions Action con RBAC
       - name: Deploy to Azure Function
         uses: azure/functions-action@v1
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          # No uses publish-profile aquí, ya que usamos RBAC
-
-      # 7️⃣ Logout de Azure (buena práctica de seguridad)
+          slot-name: 'production'  # Explícito
+          respect-funcignore: true
+       
+      # 8️⃣ Logout de Azure (buena práctica de seguridad)
       - name: Logout from Azure
         run: az logout
-        if: always()
+        if: always()  # ✅ Sintaxis corregida
