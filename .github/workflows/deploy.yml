@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'crudSilabo'       # Nombre de tu Azure Function App en Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'    # Ruta donde está tu código de la Function
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'api'    # Ruta donde está tu código de la Function
   NODE_VERSION: '22'                    # Versión de Node.js
 
 jobs:
