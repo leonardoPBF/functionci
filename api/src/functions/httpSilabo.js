@@ -1,13 +1,14 @@
-const { app } = require('@azure/functions');
+const { app } = require("@azure/functions");
 
-app.http('httpSilabo', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
-    handler: async (request, context) => {
-        context.log(`Http function processed request for url "${request.url}"`);
+app.http("httpSilabo", {
+  methods: ["GET", "POST"],
+  authLevel: "anonymous",
+  handler: async (request, context) => {
+    context.log(`Http function processed request for url "${request.url}"`);
 
-        const name = request.query.get('name') || await request.text() || 'SIlabo';
+    const name =
+      request.query.get("name") || (await request.text()) || "SIlabo";
 
-        return { body: `Hello, ${name}!` };
-    }
+    return { body: `Jesus ${name}!` };
+  },
 });
