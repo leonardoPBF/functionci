@@ -36,9 +36,16 @@ func --version
 ```
 
 ## 🛠 Iniciar proyecto
-git clone <url-del-repositorio>
+git clone [<url-del-repositorio>](https://github.com/leonardoPBF/functionci.git)
+
+instalar azure cliente, en mi caso msi 64bits:
+https://learn.microsoft.com/es-es/cli/azure/install-azure-cli-windows?view=azure-cli-latest&pivots=msi
+
+Para correr el proyecto
+npm install
 
 Correr functions en local
 func start
 
+Verificar que este corriendo el azure cliente
 func --version
