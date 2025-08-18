@@ -33,7 +33,7 @@ app.http('getProfesores', {
             const queryId = request.query.get('id');
             const id = routeId || queryId;
 
-            context.log(`📝 GET /backend/profesores${id ? `/${id}` : ''}`);
+            context.log(`📝 GET /api/profesores${id ? `/${id}` : ''}`);
             context.log(`🔍 Route ID: ${routeId}, Query ID: ${queryId}`);
 
             // Test de conexión
