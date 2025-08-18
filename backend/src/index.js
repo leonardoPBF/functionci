@@ -7,6 +7,10 @@ app.setup({
     enableHttpStream: true,
 });
 
+//metodo para encontrar las funciones en subcarpetas dentro de functions
+//se usa para cargar las funciones de manera modular
+//cada carpeta dentro de functions representa una categoria de funciones
+//por ejemplo: profesores, silabos, login, estudiantes, etc.
 function loadFunctionsFromDir(dirPath, category) {
     const fullPath = path.join(__dirname, 'functions', dirPath);
     
@@ -26,9 +30,11 @@ function loadFunctionsFromDir(dirPath, category) {
     }
 }
 
-// Cargar por categorías
+// Cargar por categorías ..
+//añadir nuevas carpetas si se añaden nuevas funciones
 loadFunctionsFromDir('profesores', 'Profesor');
 loadFunctionsFromDir('silabos', 'Silabo');
+loadFunctionsFromDir('login', 'log');
 // loadFunctionsFromDir('estudiantes', 'Estudiante');
 
 console.log('🚀 Function loading completed!');

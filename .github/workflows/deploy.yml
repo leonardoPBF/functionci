@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'silabosUsmp'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './backend'
   NODE_VERSION: '20.x'  # ✅ Versión LTS estable
 
 jobs:

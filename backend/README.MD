@@ -49,3 +49,15 @@ func start
 
 Verificar que este corriendo el azure cliente
 func --version
+
+
+
+Comandos adicionales: 
+npm install bcrypt
+npm install jsonwebtoken
+
+
+
+comando para credenciales:
+az ad sp create-for-rbac --name "github-actions-silabosUsmp"--role "Contributor" --scopes "/subscriptions/4e1448e9-aa4d-43c7-a1ba-e46176bbc41a/resourceGroups/silabosUsmp_group"--sdk-auth
+
