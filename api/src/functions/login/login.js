@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 const { executeQuery, testConnection } = require('../shared/database');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 app.http('login', {
