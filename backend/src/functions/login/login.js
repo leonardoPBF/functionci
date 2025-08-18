@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 app.http('login', {
-    methods: ['POST', 'OPTIONS'], // ✅ Agregar OPTIONS para preflight
+    methods: ['GET', 'POST', 'OPTIONS'], // ✅ Agregar GET para testing
     authLevel: 'anonymous',
     handler: async (request, context) => {
         try {
             // 🔹 Headers de CORS
             const corsHeaders = {
-                'Access-Control-Allow-Origin': 'http://localhost:5173', // o '*' para desarrollo
+                'Access-Control-Allow-Origin': 'http://localhost:5173',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
                 'Access-Control-Max-Age': '86400'
@@ -26,6 +26,36 @@ app.http('login', {
                 };
             }
 
+            // 🔹 Manejar GET request para testing
+            if (request.method === 'GET') {
+                return {
+                    status: 200,
+                    headers: corsHeaders,
+                    jsonBody: { 
+                        message: 'Login API está funcionando',
+                        methods: ['POST'],
+                        endpoint: '/api/login',
+                        example: {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: { 
+                                email: 'usuario@ejemplo.com', 
+                                password: 'tu_contraseña' 
+                            }
+                        }
+                    }
+                };
+            }
+
+            // 🔹 Solo POST llega hasta aquí
+            if (request.method !== 'POST') {
+                return {
+                    status: 405,
+                    headers: corsHeaders,
+                    jsonBody: { error: 'Método no permitido. Usa POST para login.' }
+                };
+            }
+
             // 🔹 Verificar conexión a la BD
             await testConnection();
 
@@ -36,7 +66,7 @@ app.http('login', {
             if (!email || !password) {
                 return {
                     status: 400,
-                    headers: corsHeaders, // ✅ Agregar headers a todas las respuestas
+                    headers: corsHeaders,
                     jsonBody: { error: 'Email y contraseña son requeridos' }
                 };
             }
