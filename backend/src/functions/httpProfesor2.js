@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 
-app.http('httpProfesor', {
+app.http('httpProfesor2', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
