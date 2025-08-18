@@ -1,7 +1,6 @@
 const { app } = require('@azure/functions');
 const { executeQuery, testConnection } = require('./shared/database');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 app.http('login', {
@@ -52,11 +51,7 @@ app.http('login', {
                         timestamp: new Date().toISOString(),
                         status: {
                             database: dbStatus,
-                            bcrypt: '✅ disponible',
-                            jwt: '✅ disponible',
-                            env_vars: {
-                                JWT_SECRET: process.env.JWT_SECRET ? '✅ configurado' : '❌ faltante'
-                            }
+                            bcrypt: '✅ disponible'
                         },
                         endpoints: {
                             login: 'POST /api/login',
@@ -149,28 +144,14 @@ app.http('login', {
                         };
                     }
 
-                    context.log('✅ Password verified, generating JWT');
+                    context.log('✅ Password verified - Login successful');
 
-                    // Generar JWT token
-                    const token = jwt.sign(
-                        {
-                            id: user.id_usuario,
-                            email: user.correo_institucional,
-                            tipo: user.tipo_usuario
-                        },
-                        process.env.JWT_SECRET || 'mi_clave_secreta_fallback',
-                        { expiresIn: '2h' }
-                    );
-
-                    context.log('✅ Login successful for user:', email);
-
-                    // Respuesta exitosa
+                    // Respuesta exitosa sin JWT
                     return {
                         status: 200,
                         headers: corsHeaders,
                         jsonBody: {
                             message: 'Login exitoso',
-                            token,
                             usuario: {
                                 id: user.id_usuario,
                                 email: user.correo_institucional,
